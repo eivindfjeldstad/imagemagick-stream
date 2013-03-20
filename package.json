@@ -1,0 +1,11 @@
+{
+  "name": "imagemagick-stream",
+  "version": "0.0.1",
+  "description": "Streaming Imagemagick api",
+  "keywords": ["stream", "imagemagick", "thumbnail"],
+  "author": "Eivind Fjeldstad",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eivindfjeldstad/imagemagick-stream.git"
+  }
+}
