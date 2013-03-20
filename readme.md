@@ -6,19 +6,19 @@ Streaming imagemagick api
 ## Example
 
 ```js
-  var im = require('imagemagick-stream');
-  var in = fs.createReadStream('image.png');
-  var out = fs.createWriteStream('image-resized.png');
+var im = require('imagemagick-stream');
+var in = fs.createReadStream('image.png');
+var out = fs.createWriteStream('image-resized.png');
   
-  var resize = im().resize('200x200');
+var resize = im().resize('200x200');
   
-  in.pipe(resize).pipe(out);
+in.pipe(resize).pipe(out);
   
-  // Or
-  im('image.png').resize('200x200').pipe(out);
+// Alternatively
+im('image.png').resize('200x200').pipe(out);
   
-  // Or
-  im('image.png').resize('200x200').to('image-resized.png');
+// Or
+im('image.png').resize('200x200').to('image-resized.png');
 ```
 
 ## Todo

@@ -60,7 +60,7 @@ ImageMagick.prototype = {
   /**
    * Sets the `resize` option
    *
-   * @param {String|Number} args
+   * @param {String} args
    * @api public
    */
    
@@ -72,7 +72,7 @@ ImageMagick.prototype = {
   /**
    * Sets the `scale` option
    *
-   * @param {String|Number} args
+   * @param {String} args
    * @api public
    */
    
@@ -84,7 +84,7 @@ ImageMagick.prototype = {
   /**
    * Sets the `crop` option
    *
-   * @param {String|Number} args
+   * @param {String} args
    * @api public
    */
   
@@ -96,7 +96,7 @@ ImageMagick.prototype = {
   /**
    * Sets the `gravity` option
    *
-   * @param {String|Number} args
+   * @param {String} args
    * @api public
    */
   
@@ -108,7 +108,7 @@ ImageMagick.prototype = {
   /**
    * Sets the `thumbnail` option
    *
-   * @param {String|Number} args
+   * @param {String} args
    * @api public
    */
   
@@ -118,28 +118,28 @@ ImageMagick.prototype = {
   },
   
   /**
-   * Read image data from uri
+   * Read image data from path
    *
-   * @param {String} uri
+   * @param {String} path
    * @api public
    */
    
-  from: function (uri) {
-    var read = fs.createReadStream(uri);
+  from: function (path) {
+    var read = fs.createReadStream(path);
     read.on('error', _onerror.bind(this))
     read.pipe(this);
     return this;
   },
   
   /**
-   * Write image data to uri
+   * Write image data to path
    *
-   * @param {String} uri
+   * @param {String} path
    * @api public
    */
    
-  to: function (uri) {
-    var write = fs.createWriteStream(uri);
+  to: function (path) {
+    var write = fs.createWriteStream(path);
     write.on('error', _onerror.bind(this))
     this.pipe(write);
     return this;
