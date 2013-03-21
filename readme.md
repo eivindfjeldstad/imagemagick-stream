@@ -3,7 +3,9 @@
 Streaming imagemagick api
 
 ## Use
-```npm install imagemagick-stream```
+```
+npm install imagemagick-stream
+```
 
 ```js
 var im = require('imagemagick-stream');
