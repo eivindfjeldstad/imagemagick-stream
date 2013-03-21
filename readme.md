@@ -3,9 +3,7 @@
 Streaming imagemagick api
 
 ## Use
-```
-npm install imagemagick-stream
-```
+    $ npm install dateable
 
 ```js
 var im = require('imagemagick-stream');
