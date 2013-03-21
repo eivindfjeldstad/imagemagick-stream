@@ -1,5 +1,6 @@
 var spawn = require('child_process').spawn
   , Duplex = require('stream').Duplex
+  , isError = require('util').isError
   , fs = require('fs');
 
 function ImageMagick (src) {
@@ -171,7 +172,8 @@ function _spawn () {
 }
 
 function _onerror (err) {
-  this.emit('error', new Error(err));
+  if (!isError(err)) err = new Error(err.toString());
+  this.emit('error', err);
 }
 
 module.exports = ImageMagick;
