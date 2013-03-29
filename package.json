@@ -1,6 +1,6 @@
 {
   "name": "imagemagick-stream",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Streaming Imagemagick api",
   "keywords": ["stream", "imagemagick", "thumbnail"],
   "author": "Eivind Fjeldstad",
