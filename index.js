@@ -3,6 +3,10 @@ var spawn = require('child_process').spawn
   , isError = require('util').isError
   , fs = require('fs');
 
+
+// Node pre v0.10.0 comp.
+if (!Duplex) Duplex = require('readable-stream').Duplex;
+
 function ImageMagick (src) {
   if (!(this instanceof ImageMagick))
     return new ImageMagick(src);

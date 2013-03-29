@@ -4,6 +4,9 @@
   "description": "Streaming Imagemagick api",
   "keywords": ["stream", "imagemagick", "thumbnail"],
   "author": "Eivind Fjeldstad",
+  "dependencies": {
+    "readable-stream": "1.0.x"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/eivindfjeldstad/imagemagick-stream.git"
