@@ -1,11 +1,14 @@
 var spawn = require('child_process').spawn
-  , Duplex = require('stream').Duplex
+  , stream = require('stream')
+  , Duplex = stream.Duplex
+  , Readable = stream.Readable
   , isError = require('util').isError
   , fs = require('fs');
 
 
 // Node pre v0.10.0 comp.
 if (!Duplex) Duplex = require('readable-stream').Duplex;
+if (!Readable) Readable = require('readable-stream').Readable;
 
 function ImageMagick (src) {
   if (!(this instanceof ImageMagick))
@@ -158,6 +161,12 @@ function _spawn () {
   var proc = spawn('convert', this.args);
   
   var stdout = proc.stdout;
+  
+  if (!stdout.read) {
+    stdout = new Readable();
+    stdout.wrap(proc.stdout);
+  }
+  
   stdout.on('end', this.push.bind(this, null));
   stdout.on('readable', this.read.bind(this, 0));
   stdout.on('error', onerror);
