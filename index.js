@@ -171,7 +171,7 @@ ImageMagick.prototype = {
 
 function _spawn () {
   var onerror = _onerror.bind(this);
-  this.args.push('-');
+  this.args.push(this.imgout + '-');
   
   var proc = spawn('convert', this.args);
   
