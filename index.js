@@ -17,6 +17,7 @@ function ImageMagick (src) {
   Duplex.call(this);
   this.source = undefined;
   this.args = ['-'];
+  this.imgout = "";
   src && this.from(src);
   process.nextTick(_spawn.bind(this));
 }
@@ -124,14 +125,28 @@ ImageMagick.prototype = {
     this.args.push('-thumbnail', args);
     return this;
   },
-  
+ 
+
   /**
-   * Read image data from path
+   *sets the 'imgtype' option
    *
-   * @param {String} path
-   * @api public
+   *@param {string} type
+   *@api public
    */
-   
+
+  imgtype: function(type) {
+    this.imgout = type + ':';  
+    return this;
+  },
+
+  /**
+   *Read image data from path
+   *
+   *@param {string} path
+   *@api public
+   */
+
+
   from: function (path) {
     var read = fs.createReadStream(path);
     read.on('error', _onerror.bind(this))
