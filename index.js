@@ -4,7 +4,7 @@ var spawn = require('child_process').spawn
   , Readable = stream.Readable
   , isError = require('util').isError
   , fs = require('fs');
-
+  , util = require('util')
 
 // Node pre v0.10.0 comp.
 if (!Duplex) Duplex = require('readable-stream').Duplex;
@@ -17,13 +17,18 @@ function ImageMagick (src) {
   Duplex.call(this);
   this.source = undefined;
   this.args = ['-'];
+  this.imgout = "";
   src && this.from(src);
   process.nextTick(_spawn.bind(this));
 }
   
 ImageMagick.prototype = {
   __proto__: Duplex.prototype,
-  
+
+  Stream : function(src) {
+      return new ImageMagick(src)
+  }
+
   /**
    * Implementing _read
    *
@@ -124,14 +129,41 @@ ImageMagick.prototype = {
     this.args.push('-thumbnail', args);
     return this;
   },
-  
+ 
+
   /**
-   * Read image data from path
+   *sets the 'imgtype' option
    *
-   * @param {String} path
-   * @api public
+   *@param {string} type
+   *@api public
    */
-   
+
+  imgtype: function(type) {
+    this.imgout = type + ':';  
+    return this;
+  },
+
+  /** 
+   *sets the autorotation option
+   *
+   *@param {boolean} type
+   *@api public
+   */ 
+
+   autorotation: function(rotate) {
+     if(rotate){
+       this.args.push('-autorotate');
+     }
+     return this;
+   },
+  /**
+   *Read image data from path
+   *
+   *@param {string} path
+   *@api public
+   */
+
+
   from: function (path) {
     var read = fs.createReadStream(path);
     read.on('error', _onerror.bind(this))
@@ -156,7 +188,7 @@ ImageMagick.prototype = {
 
 function _spawn () {
   var onerror = _onerror.bind(this);
-  this.args.push('-');
+  this.args.push(this.imgout + '-');
   
   var proc = spawn('convert', this.args);
   
