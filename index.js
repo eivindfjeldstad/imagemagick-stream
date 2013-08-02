@@ -4,7 +4,7 @@ var spawn = require('child_process').spawn
   , Readable = stream.Readable
   , isError = require('util').isError
   , fs = require('fs');
-
+  , util = require('util')
 
 // Node pre v0.10.0 comp.
 if (!Duplex) Duplex = require('readable-stream').Duplex;
@@ -24,7 +24,11 @@ function ImageMagick (src) {
   
 ImageMagick.prototype = {
   __proto__: Duplex.prototype,
-  
+
+  Stream : function(src) {
+      return new ImageMagick(src)
+  }
+
   /**
    * Implementing _read
    *
@@ -139,6 +143,19 @@ ImageMagick.prototype = {
     return this;
   },
 
+  /** 
+   *sets the autorotation option
+   *
+   *@param {boolean} type
+   *@api public
+   */ 
+
+   autorotation: function(rotate) {
+     if(rotate){
+       this.args.push('-autorotate');
+     }
+     return this;
+   },
   /**
    *Read image data from path
    *
