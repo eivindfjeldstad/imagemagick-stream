@@ -128,12 +128,11 @@ ImageMagick.prototype = {
   /**
    * Sets the `auto-orient` option
    *
-   * @param {String} args
    * @api public
    */
   
-  autoOrient: function (args) {
-    this.args.push('-auto-orient', args);
+  autoOrient: function () {
+    this.args.push('-auto-orient');
     return this;
   },
   
