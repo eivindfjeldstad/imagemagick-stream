@@ -135,6 +135,18 @@ ImageMagick.prototype = {
   },
   
   /**
+   * Sets the `type` option
+   *
+   * @param {String} args
+   * @api public
+   */
+  
+  type: function (args) {
+    this.args.push('-type', args);
+    return this;
+  },
+  
+  /**
    * Read image data from path
    *
    * @param {String} path
