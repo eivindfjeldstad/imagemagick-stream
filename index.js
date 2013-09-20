@@ -17,6 +17,7 @@ function ImageMagick (src) {
   Duplex.call(this);
   this.source = undefined;
   this.args = ['-'];
+  this.output = '-';
   src && this.from(src);
   process.nextTick(_spawn.bind(this));
 }
@@ -49,6 +50,30 @@ ImageMagick.prototype = {
     this.once('spawn', function () {
       this._write(chunk, encoding, callback);
     });
+  },
+  
+  /**
+   * Sets the input file format
+   *
+   * @param {String} args
+   * @api public
+   */
+  
+  inputFormat: function (args) {
+    this.args[0]=args+':-';
+    return this;
+  },
+  
+  /**
+   * Sets the output file format
+   *
+   * @param {String} args
+   * @api public
+   */
+  
+  outputFormat: function (args) {
+    this.output = args+':-';
+    return this;
   },
   
   /**
@@ -177,7 +202,7 @@ ImageMagick.prototype = {
 
 function _spawn () {
   var onerror = _onerror.bind(this);
-  this.args.push('-');
+  this.args.push(this.output);
   
   var proc = spawn('convert', this.args);
   
