@@ -31,9 +31,7 @@ ImageMagick.prototype = {
    */
   
   _read: function (n) {
-    if (!this.source) return this.push('');
-    var chunk = this.source.read(n);
-    this.push(chunk || '');
+    return this.push('');
   },
   
   /**
@@ -179,7 +177,7 @@ function _spawn () {
   }
   
   stdout.on('end', this.push.bind(this, null));
-  stdout.on('readable', this.read.bind(this, 0));
+  stdout.on('data', this.push.bind(this));
   stdout.on('error', onerror);
     
   var stderr = proc.stderr;
