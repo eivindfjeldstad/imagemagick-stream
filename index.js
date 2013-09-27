@@ -17,6 +17,7 @@ function ImageMagick (src) {
   Duplex.call(this);
   this.source = undefined;
   this.args = ['-'];
+  this.output = '-';
   src && this.from(src);
   process.nextTick(_spawn.bind(this));
 }
@@ -31,9 +32,7 @@ ImageMagick.prototype = {
    */
   
   _read: function (n) {
-    if (!this.source) return this.push('');
-    var chunk = this.source.read(n);
-    this.push(chunk || '');
+    return this.push('');
   },
   
   /**
@@ -51,6 +50,30 @@ ImageMagick.prototype = {
     this.once('spawn', function () {
       this._write(chunk, encoding, callback);
     });
+  },
+  
+  /**
+   * Sets the input file format
+   *
+   * @param {String} args
+   * @api public
+   */
+  
+  inputFormat: function (args) {
+    this.args[0]=args+':-';
+    return this;
+  },
+  
+  /**
+   * Sets the output file format
+   *
+   * @param {String} args
+   * @api public
+   */
+  
+  outputFormat: function (args) {
+    this.output = args+':-';
+    return this;
   },
   
   /**
@@ -137,6 +160,18 @@ ImageMagick.prototype = {
   },
   
   /**
+   * Sets the `type` option
+   *
+   * @param {String} args
+   * @api public
+   */
+  
+  type: function (args) {
+    this.args.push('-type', args);
+    return this;
+  },
+  
+  /**
    * Read image data from path
    *
    * @param {String} path
@@ -167,7 +202,7 @@ ImageMagick.prototype = {
 
 function _spawn () {
   var onerror = _onerror.bind(this);
-  this.args.push('-');
+  this.args.push(this.output);
   
   var proc = spawn('convert', this.args);
   
@@ -179,7 +214,7 @@ function _spawn () {
   }
   
   stdout.on('end', this.push.bind(this, null));
-  stdout.on('readable', this.read.bind(this, 0));
+  stdout.on('data', this.push.bind(this));
   stdout.on('error', onerror);
     
   var stderr = proc.stderr;
