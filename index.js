@@ -170,7 +170,25 @@ ImageMagick.prototype = {
     this.args.push('-type', args);
     return this;
   },
+
+  /**
+   * Passes additional arguments
+   *
+   * @param {Array} args
+   * @api public
+   */
   
+  options: function (options) {
+    var that = this;
+    Object.keys(options).forEach(function(key) {
+      var argName = key.indexOf('-') === 0
+        ? key
+        : ('-' + key);
+      that.args.push(argName, options[key]);
+    });
+    return this;
+  },
+
   /**
    * Read image data from path
    *
