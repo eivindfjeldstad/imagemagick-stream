@@ -25,6 +25,19 @@ im('image.png')
   .resize('200x200')
   .quality(90)
   .to('image-resized.png');
+  
+
+```
+For "freehand" arguments, use `.options(...)`, e.g.:
+``` js
+im('image.png')
+  .resize('200x200')
+  .quality(90)
+  .options({
+    'gaussian-blur': 0.05,
+    'interlace': 'Plane'
+  })
+  .to('image-resized.png');
 ```
 
 ## Todo
