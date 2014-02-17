@@ -34,6 +34,7 @@ im('image.png')
   .resize('200x200')
   .quality(90)
   .options({
+    'strip': undefined,
     'gaussian-blur': 0.05,
     'interlace': 'Plane'
   })
