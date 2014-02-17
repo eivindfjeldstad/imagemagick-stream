@@ -174,7 +174,7 @@ ImageMagick.prototype = {
   /**
    * Passes additional arguments
    *
-   * @param {Array} args
+   * @param {Object} options
    * @api public
    */
   
