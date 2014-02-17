@@ -184,7 +184,11 @@ ImageMagick.prototype = {
       var argName = key.indexOf('-') === 0
         ? key
         : ('-' + key);
-      that.args.push(argName, options[key]);
+      that.args.push(argName);
+      var argValue = options[key];
+      if (argValue !== undefined) {
+        that.args.push(argValue);
+      }
     });
     return this;
   },
