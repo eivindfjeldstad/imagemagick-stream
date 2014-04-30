@@ -12,6 +12,9 @@
     "readable-stream": "1.0.x",
     "duplexer2": "eivindfjeldstad/duplexer2"
   },
+  "devDependencies": {
+    "mocha": "~1.18.2"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/eivindfjeldstad/imagemagick-stream.git"
