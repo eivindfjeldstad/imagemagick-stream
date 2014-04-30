@@ -2,10 +2,15 @@
   "name": "imagemagick-stream",
   "version": "0.1.1",
   "description": "Streaming Imagemagick api",
-  "keywords": ["stream", "imagemagick", "thumbnail"],
+  "keywords": [
+    "stream",
+    "imagemagick",
+    "thumbnail"
+  ],
   "author": "Eivind Fjeldstad",
   "dependencies": {
-    "readable-stream": "1.0.x"
+    "readable-stream": "1.0.x",
+    "duplexer2": "eivindfjeldstad/duplexer2"
   },
   "repository": {
     "type": "git",

@@ -1,56 +1,26 @@
+var PassThrough = require('stream').PassThrough;
+var Duplex = require('duplexer2').DuplexWrapper;
 var spawn = require('child_process').spawn
-  , stream = require('stream')
-  , Duplex = stream.Duplex
-  , Readable = stream.Readable
-  , isError = require('util').isError
-  , fs = require('fs');
-
-
-// Node pre v0.10.0 comp.
-if (!Duplex) Duplex = require('readable-stream').Duplex;
-if (!Readable) Readable = require('readable-stream').Readable;
+var isError = require('util').isError;
+var fs = require('fs');
 
 function ImageMagick (src) {
-  if (!(this instanceof ImageMagick))
-    return new ImageMagick(src);
+  if (!(this instanceof ImageMagick)) return new ImageMagick(src);
   
-  Duplex.call(this);
-  this.source = undefined;
   this.args = ['-'];
   this.output = '-';
-  src && this.from(src);
-  process.nextTick(_spawn.bind(this));
+  
+  this.in = new PassThrough();
+  this.out = new PassThrough();
+  
+  Duplex.call(this, this.in, this.out);
+  
+  if (src) this.from(src);
+  setImmediate(_spawn.bind(this));
 }
   
 ImageMagick.prototype = {
   __proto__: Duplex.prototype,
-  
-  /**
-   * Implementing _read
-   *
-   * @api private
-   */
-  
-  _read: function (n) {
-    return this.push('');
-  },
-  
-  /**
-   * Implementing _write
-   *
-   * @api private
-   */
-  
-  _write: function (chunk, encoding, callback) {
-    if (this.dest) {
-      this.dest.write(chunk, encoding, callback);
-      return;
-    }
-    
-    this.once('spawn', function () {
-      this._write(chunk, encoding, callback);
-    });
-  },
   
   /**
    * Sets the input file format
@@ -60,7 +30,7 @@ ImageMagick.prototype = {
    */
   
   inputFormat: function (args) {
-    this.args[0]=args+':-';
+    this.args[0] = args + ':-';
     return this;
   },
   
@@ -72,7 +42,7 @@ ImageMagick.prototype = {
    */
   
   outputFormat: function (args) {
-    this.output = args+':-';
+    this.output = args + ':-';
     return this;
   },
   
@@ -179,17 +149,18 @@ ImageMagick.prototype = {
    */
   
   options: function (options) {
-    var that = this;
-    Object.keys(options).forEach(function(key) {
-      var argName = key.indexOf('-') === 0
-        ? key
-        : ('-' + key);
-      that.args.push(argName);
-      var argValue = options[key];
-      if (argValue !== undefined) {
-        that.args.push(argValue);
-      }
+    var self = this;
+    
+    Object.keys(options).forEach(function (key) {
+      var arg = key.indexOf('-')
+        ? ('-' + key)
+        : key;
+        
+      self.args.push(arg);
+      var val = options[key];
+      if (val != null) self.args.push(val);
     });
+    
     return this;
   },
 
@@ -227,28 +198,19 @@ function _spawn () {
   this.args.push(this.output);
   
   var proc = spawn('convert', this.args);
-  
   var stdout = proc.stdout;
+  var stdin = proc.stdin;
   
-  if (!stdout.read) {
-    stdout = new Readable();
-    stdout.wrap(proc.stdout);
-  }
-  
-  stdout.on('end', this.push.bind(this, null));
-  stdout.on('data', this.push.bind(this));
+  stdin.on('error', onerror);
   stdout.on('error', onerror);
-    
+  
+  this.in.pipe(stdin);
+  stdout.pipe(this.out);
+  
   var stderr = proc.stderr;
   stderr.on('data', onerror);
   stderr.on('error', onerror);
   
-  var stdin = proc.stdin;
-  stdin.on('error', onerror);
-  this.on('finish', stdin.end.bind(stdin));
-  
-  this.source = stdout;
-  this.dest = stdin;
   this.emit('spawn', proc);
 }
 
