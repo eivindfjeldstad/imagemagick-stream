@@ -4,11 +4,28 @@ var spawn = require('child_process').spawn
 var isError = require('util').isError;
 var fs = require('fs');
 
+/**
+ * Expose `ImageMagick`
+ */
+
+module.exports = ImageMagick;
+
+/**
+ * Constructor
+ *
+ * @param {String} src
+ * @api public
+ */
+
 function ImageMagick (src) {
   if (!(this instanceof ImageMagick)) return new ImageMagick(src);
   
-  this.args = ['-'];
+  this.input = '-';
   this.output = '-';
+  this.args = [];
+  
+  this.spawn = this.spawn.bind(this);
+  this.onerror = this.onerror.bind(this);
   
   this.in = new PassThrough();
   this.out = new PassThrough();
@@ -16,7 +33,7 @@ function ImageMagick (src) {
   Duplex.call(this, this.in, this.out);
   
   if (src) this.from(src);
-  setImmediate(_spawn.bind(this));
+  setImmediate(this.spawn);
 }
   
 ImageMagick.prototype = {
@@ -30,7 +47,7 @@ ImageMagick.prototype = {
    */
   
   inputFormat: function (args) {
-    this.args[0] = args + ':-';
+    this.input = args + ':-';
     return this;
   },
   
@@ -148,18 +165,12 @@ ImageMagick.prototype = {
    * @api public
    */
   
-  options: function (options) {
-    var self = this;
-    
+  options: function (options) {    
     Object.keys(options).forEach(function (key) {
-      var arg = key.indexOf('-')
-        ? ('-' + key)
-        : key;
-        
-      self.args.push(arg);
       var val = options[key];
-      if (val != null) self.args.push(val);
-    });
+      this.args.push('-' + key);
+      if (val != null) this.args.push(val);
+    }, this);
     
     return this;
   },
@@ -173,7 +184,7 @@ ImageMagick.prototype = {
    
   from: function (path) {
     var read = fs.createReadStream(path);
-    read.on('error', _onerror.bind(this))
+    read.on('error', this.onerror);
     read.pipe(this);
     return this;
   },
@@ -187,36 +198,46 @@ ImageMagick.prototype = {
    
   to: function (path) {
     var write = fs.createWriteStream(path);
-    write.on('error', _onerror.bind(this))
+    write.on('error', this.onerror);
     this.pipe(write);
     return this;
+  },
+  
+  /**
+   * Spawn `convert`
+   *
+   * @api private
+   */
+  
+  spawn: function () {
+    this.args.push(this.output);
+    this.args.unshift(this.input);
+    
+    var proc = spawn('convert', this.args);
+    
+    var stdin = proc.stdin;  
+    stdin.on('error', this.onerror);
+    this.in.pipe(stdin);
+    
+    var stdout = proc.stdout;
+    stdout.on('error', this.onerror);
+    stdout.pipe(this.out);
+  
+    var stderr = proc.stderr;
+    stderr.on('data', this.onerror);
+    stderr.on('error', this.onerror);
+  
+    this.emit('spawn', proc);
+  },
+  
+  /**
+   * Re-emit errors
+   *
+   * @api private
+   */
+  
+  onerror: function (err) {
+    if (!isError(err)) err = new Error(err.toString());
+    this.emit('error', err);
   }
 };
-
-function _spawn () {
-  var onerror = _onerror.bind(this);
-  this.args.push(this.output);
-  
-  var proc = spawn('convert', this.args);
-  var stdout = proc.stdout;
-  var stdin = proc.stdin;
-  
-  stdin.on('error', onerror);
-  stdout.on('error', onerror);
-  
-  this.in.pipe(stdin);
-  stdout.pipe(this.out);
-  
-  var stderr = proc.stderr;
-  stderr.on('data', onerror);
-  stderr.on('error', onerror);
-  
-  this.emit('spawn', proc);
-}
-
-function _onerror (err) {
-  if (!isError(err)) err = new Error(err.toString());
-  this.emit('error', err);
-}
-
-module.exports = ImageMagick;
