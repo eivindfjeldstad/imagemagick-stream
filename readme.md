@@ -25,10 +25,8 @@ im('image.png')
   .resize('200x200')
   .quality(90)
   .to('image-resized.png');
-  
-
 ```
-For "freehand" arguments, use `.options(...)`, e.g.:
+For freehand arguments, use `.options()`:
 ``` js
 im('image.png')
   .resize('200x200')
