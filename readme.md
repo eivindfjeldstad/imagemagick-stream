@@ -42,6 +42,7 @@ im('image.png')
 ```
 
 ## Todo
+- NEED TESTS!
 - More options
 
 ## License 
