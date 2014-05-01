@@ -14,6 +14,9 @@
   "devDependencies": {
     "mocha": "~1.18.2"
   },
+  "scirpts": {
+    "test": "make test"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/eivindfjeldstad/imagemagick-stream.git"
