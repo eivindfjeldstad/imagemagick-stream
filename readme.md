@@ -35,13 +35,8 @@ im('image.png')
     'strip': undefined,
     'gaussian-blur': 0.05,
     'interlace': 'Plane'
-  })
-  .to('image-resized.png');
+  });
 ```
-
-## Todo
-- NEED TESTS!
-- More options
 
 ## License 
 

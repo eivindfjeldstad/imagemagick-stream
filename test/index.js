@@ -1,4 +1,5 @@
 var assert = require('assert');
+var fs = require('fs');
 var im = require('../');
 
 describe('im()', function () {
@@ -14,6 +15,41 @@ describe('im()', function () {
   
   it('should have an .output property', function () {
     assert(im().output == '-');
+  });
+  
+  it('should be pipe-able', function (done) {
+    var img = im();
+    fs.createReadStream(__dirname + '/test.jpg').pipe(img);
+    img.pipe(fs.createWriteStream(__dirname + '/test-resized.jpg'));
+    img.on('finish', function () {
+      assert(fs.existsSync(__dirname + '/test-resized.jpg'));
+      fs.unlinkSync(__dirname + '/test-resized.jpg');
+      done();
+    });
+  });
+  
+  describe('.from()', function () {
+    it('should read from the given path', function (done) {
+      var img = im().from(__dirname + '/test.jpg');
+      img.pipe(fs.createWriteStream(__dirname + '/test-resized.jpg'));
+      img.on('finish', function () {
+        assert(fs.existsSync(__dirname + '/test-resized.jpg'));
+        fs.unlinkSync(__dirname + '/test-resized.jpg');
+        done();
+      });
+    });
+  });
+  
+  describe('.to()', function () {
+    it('should write to the given path', function (done) {
+      var img = im().to(__dirname + '/test-resized.jpg');
+      fs.createReadStream(__dirname + '/test.jpg').pipe(img);
+      img.on('finish', function () {
+        assert(fs.existsSync(__dirname + '/test-resized.jpg'));
+        fs.unlinkSync(__dirname + '/test-resized.jpg');
+        done();
+      });
+    });
   });
   
   describe('.spawn()', function () {
