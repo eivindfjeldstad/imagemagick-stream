@@ -1,6 +1,6 @@
 {
   "name": "imagemagick-stream",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Streaming Imagemagick api",
   "keywords": [
     "stream",
@@ -9,8 +9,7 @@
   ],
   "author": "Eivind Fjeldstad",
   "dependencies": {
-    "readable-stream": "1.0.x",
-    "duplexer2": "eivindfjeldstad/duplexer2"
+    "reduplexer": "0.0.2"
   },
   "devDependencies": {
     "mocha": "~1.18.2"

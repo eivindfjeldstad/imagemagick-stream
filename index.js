@@ -1,7 +1,7 @@
 var PassThrough = require('stream').PassThrough;
-var Duplex = require('duplexer2').DuplexWrapper;
 var spawn = require('child_process').spawn
 var isError = require('util').isError;
+var Duplex = require('reduplexer');
 var fs = require('fs');
 
 /**
@@ -223,21 +223,10 @@ ImageMagick.prototype = {
     stdout.on('error', this.onerror);
     stdout.pipe(this.out);
   
-    var stderr = proc.stderr;
-    stderr.on('data', this.onerror);
-    stderr.on('error', this.onerror);
-  
     this.emit('spawn', proc);
   },
   
-  /**
-   * Re-emit errors
-   *
-   * @api private
-   */
-  
   onerror: function (err) {
-    if (!isError(err)) err = new Error(err.toString());
     this.emit('error', err);
   }
 };
