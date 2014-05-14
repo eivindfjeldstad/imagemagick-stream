@@ -222,11 +222,24 @@ ImageMagick.prototype = {
     var stdout = proc.stdout;
     stdout.on('error', this.onerror);
     stdout.pipe(this.out);
+    
+    var stderr = proc.stderr;
+    stderr.on('data', this.onerror);
+    stderr.on('error', this.onerror);
   
     this.emit('spawn', proc);
   },
   
+  /**
+   * Re-emit errors
+   *
+   * @param {Error|Buffer} err
+   * @api private
+   */
+  
   onerror: function (err) {
+    if (!isError(err)) err = new Error(err);
+    if (!this.listeners('error')) throw err;
     this.emit('error', err);
   }
 };

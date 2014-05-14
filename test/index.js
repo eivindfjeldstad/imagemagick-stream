@@ -28,6 +28,16 @@ describe('im()', function () {
     });
   });
   
+  it('should emit errors from stderr', function (done) {
+    var img = im();
+    img.write('invalid data');
+    img.end();
+    img.on('error', function (err) {
+      assert(/^convert\:/.test(err.message));
+      done();
+    });
+  });
+  
   describe('.from()', function () {
     it('should read from the given path', function (done) {
       var img = im().from(__dirname + '/test.jpg');
