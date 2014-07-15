@@ -2,7 +2,8 @@
 
 Streaming imagemagick api
 
-[![Build Status](https://travis-ci.org/eivindfjeldstad/imagemagick-stream.svg?branch=master)](https://travis-ci.org/eivindfjeldstad/imagemagick-stream)
+[![npm version](http://img.shields.io/npm/v/validate.svg?style=flat)](https://npmjs.org/package/validate)
+[![Build Status](http://img.shields.io/travis/eivindfjeldstad/validate.svg?style=flat)](https://travis-ci.org/eivindfjeldstad/imagemagick-stream)
 
 ## Use
     $ npm install imagemagick-stream
