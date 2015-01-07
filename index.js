@@ -24,7 +24,8 @@ function ImageMagick (src) {
   
   this.input = '-';
   this.output = '-';
-  this.args = [];
+  this._operations = [];
+  this._settings = [];
   
   this.spawn = this.spawn.bind(this);
   this.onerror = this.onerror.bind(this);
@@ -76,7 +77,7 @@ ImageMagick.prototype.outputFormat = function (args) {
  */
 
 ImageMagick.prototype.quality = function (args) {
-  this.args.push('-quality', args);
+  this._operations.push('-quality', args);
   return this;
 };
 
@@ -88,7 +89,7 @@ ImageMagick.prototype.quality = function (args) {
  */
  
 ImageMagick.prototype.resize = function (args) {
-  this.args.push('-resize', args);
+  this._operations.push('-resize', args);
   return this;
 };
 
@@ -100,7 +101,7 @@ ImageMagick.prototype.resize = function (args) {
  */
  
 ImageMagick.prototype.scale = function (args) {
-  this.args.push('-scale', args);
+  this._operations.push('-scale', args);
   return this;
 };
 
@@ -112,7 +113,7 @@ ImageMagick.prototype.scale = function (args) {
  */
 
 ImageMagick.prototype.crop = function (args) {    
-  this.args.push('-crop', args);
+  this._operations.push('-crop', args);
   return this;
 };
 
@@ -124,7 +125,7 @@ ImageMagick.prototype.crop = function (args) {
  */
 
 ImageMagick.prototype.gravity = function (args) {
-  this.args.push('-gravity', args);
+  this._operations.push('-gravity', args);
   return this;
 };
 
@@ -136,7 +137,7 @@ ImageMagick.prototype.gravity = function (args) {
  */
 
 ImageMagick.prototype.thumbnail = function (args) {
-  this.args.push('-thumbnail', args);
+  this._operations.push('-thumbnail', args);
   return this;
 };
 
@@ -147,7 +148,7 @@ ImageMagick.prototype.thumbnail = function (args) {
  */
 
 ImageMagick.prototype.autoOrient = function () {
-  this.args.push('-auto-orient');
+  this._operations.push('-auto-orient');
   return this;
 };
 
@@ -159,22 +160,39 @@ ImageMagick.prototype.autoOrient = function () {
  */
 
 ImageMagick.prototype.type = function (args) {
-  this.args.push('-type', args);
+  this._operations.push('-type', args);
   return this;
 };
 
 /**
- * Passes additional arguments
+ * Passes additional settings
  *
  * @param {Object} options
  * @api public
  */
 
-ImageMagick.prototype.options = function (options) {    
-  Object.keys(options).forEach(function (key) {
-    var val = options[key];
-    this.args.push('-' + key);
-    if (val != null) this.args.push(val);
+ImageMagick.prototype.settings = function(settings) {
+  Object.keys(settings).forEach(function (key) {
+    var val = settings[key];
+    this._settings.push('-' + key);
+    if (val != null) this._settings.push(val);
+  }, this);
+  
+  return this;
+}
+
+/**
+ * Passes additional operations
+ *
+ * @param {Object} options
+ * @api public
+ */
+
+ImageMagick.prototype.operations = function (operations) {    
+  Object.keys(operations).forEach(function (key) {
+    var val = operations[key];
+    this._operations.push('-' + key);
+    if (val != null) this._operations.push(val);
   }, this);
   
   return this;
@@ -215,10 +233,8 @@ ImageMagick.prototype.to = function (path) {
  */
 
 ImageMagick.prototype.spawn = function () {
-  this.args.push(this.output);
-  this.args.unshift(this.input);
-  
-  var proc = spawn('convert', this.args);
+  args = this.args();
+  var proc = spawn('convert', args);
   
   var stdin = proc.stdin;  
   stdin.on('error', this.onerror);
@@ -234,6 +250,14 @@ ImageMagick.prototype.spawn = function () {
 
   this.emit('spawn', proc);
 };
+
+/**
+ * Constructs args for cli call
+ * @api private
+ */
+ImageMagick.prototype.args = function() {
+  return [].concat(this._settings, [this.input], this._operations, [this.output]);
+}
 
 /**
  * Re-emit errors

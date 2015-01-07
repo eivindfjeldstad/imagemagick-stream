@@ -29,15 +29,26 @@ im('image.png')
   .quality(90)
   .to('image-resized.png');
 ```
-For freehand arguments, use `.options()`
+For freehand operations, use `.operations()`
 ``` js
 im('image.png')
   .resize('200x200')
   .quality(90)
-  .options({
+  .operations({
     'strip': undefined,
     'gaussian-blur': 0.05,
     'interlace': 'Plane'
+  });
+```
+
+For freehand settings, use `.settings()`
+``` js
+im('image.png')
+  .resize('200x200')
+  .quality(90)
+  .settings({
+    'density': 400,
+    'channel': 'RGB'
   });
 ```
 
