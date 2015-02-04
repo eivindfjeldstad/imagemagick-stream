@@ -10,18 +10,17 @@ Streaming imagemagick api
 
 ```js
 var im = require('imagemagick-stream');
-var in = fs.createReadStream('image.png');
-var out = fs.createWriteStream('image-resized.png');
+var read = fs.createReadStream('image.png');
+var write = fs.createWriteStream('image-resized.png');
 
 var resize = im().resize('200x200').quality(90);
-
-in.pipe(resize).pipe(out);
+read.pipe(resize).pipe(write);
 
 // Alternatively
 im('image.png')
   .resize('200x200')
   .quality(90)
-  .pipe(out);
+  .pipe(write);
 
 // Or
 im('image.png')
@@ -38,7 +37,8 @@ im('image.png')
   .set('density', 400)
   .set('channel', 'RGB')
   .resize('200x200')
-  .op('gaussian-blur', 0.05);
+  .op('gaussian-blur', 0.05)
+  .to('image-resized.png');
 ```
 
 ## License
