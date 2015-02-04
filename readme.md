@@ -31,7 +31,7 @@ im('image.png')
 ```
 
 For freehand settings and operations, use `.op()` and `.set()`.
-See the [imagemagick docs](http://www.imagemagick.org/script/convert.php) a list of available options.
+See the [imagemagick docs](http://www.imagemagick.org/script/convert.php) for a list of available options.
 
 ``` js
 im('image.png')
