@@ -21,20 +21,20 @@ module.exports = ImageMagick;
 
 function ImageMagick (src) {
   if (!(this instanceof ImageMagick)) return new ImageMagick(src);
-  
+
   this.input = '-';
   this.output = '-';
   this._operations = [];
   this._settings = [];
-  
+
   this.spawn = this.spawn.bind(this);
   this.onerror = this.onerror.bind(this);
-  
+
   this.in = new PassThrough();
   this.out = new PassThrough();
-  
+
   Duplex.call(this, this.in, this.out);
-  
+
   if (src) this.from(src);
   setImmediate(this.spawn);
 }
@@ -42,7 +42,7 @@ function ImageMagick (src) {
 /**
  * Inherit from `Duplex`
  */
-  
+
 inherit(ImageMagick, Duplex);
 
 /**
@@ -87,7 +87,7 @@ ImageMagick.prototype.quality = function (args) {
  * @param {String} args
  * @api public
  */
- 
+
 ImageMagick.prototype.resize = function (args) {
   this._operations.push('-resize', args);
   return this;
@@ -99,7 +99,7 @@ ImageMagick.prototype.resize = function (args) {
  * @param {String} args
  * @api public
  */
- 
+
 ImageMagick.prototype.scale = function (args) {
   this._operations.push('-scale', args);
   return this;
@@ -112,7 +112,7 @@ ImageMagick.prototype.scale = function (args) {
  * @api public
  */
 
-ImageMagick.prototype.crop = function (args) {    
+ImageMagick.prototype.crop = function (args) {
   this._operations.push('-crop', args);
   return this;
 };
@@ -167,34 +167,28 @@ ImageMagick.prototype.type = function (args) {
 /**
  * Passes additional settings
  *
- * @param {Object} options
+ * @param {String|Object} key
+ * @param {Mixed} val
  * @api public
  */
 
-ImageMagick.prototype.settings = function(settings) {
-  Object.keys(settings).forEach(function (key) {
-    var val = settings[key];
-    this._settings.push('-' + key);
-    if (val != null) this._settings.push(val);
-  }, this);
-  
+ImageMagick.prototype.settings =
+ImageMagick.prototype.set = function (key, val) {
+  this.freehand('_settings', key, val);
   return this;
 }
 
 /**
  * Passes additional operations
  *
- * @param {Object} options
+ * @param {String|Object} key
+ * @param {Mixed} val
  * @api public
  */
 
-ImageMagick.prototype.operations = function (operations) {    
-  Object.keys(operations).forEach(function (key) {
-    var val = operations[key];
-    this._operations.push('-' + key);
-    if (val != null) this._operations.push(val);
-  }, this);
-  
+ImageMagick.prototype.operations =
+ImageMagick.prototype.op = function (key, val) {
+  this.freehand('_operations', key, val);
   return this;
 };
 
@@ -204,7 +198,7 @@ ImageMagick.prototype.operations = function (operations) {
  * @param {String} path
  * @api public
  */
- 
+
 ImageMagick.prototype.from = function (path) {
   var read = fs.createReadStream(path);
   read.on('error', this.onerror);
@@ -218,7 +212,7 @@ ImageMagick.prototype.from = function (path) {
  * @param {String} path
  * @api public
  */
- 
+
 ImageMagick.prototype.to = function (path) {
   var write = fs.createWriteStream(path);
   write.on('error', this.onerror);
@@ -233,17 +227,16 @@ ImageMagick.prototype.to = function (path) {
  */
 
 ImageMagick.prototype.spawn = function () {
-  args = this.args();
-  var proc = spawn('convert', args);
-  
-  var stdin = proc.stdin;  
+  var proc = spawn('convert', this.args());
+
+  var stdin = proc.stdin;
   stdin.on('error', this.onerror);
   this.in.pipe(stdin);
-  
+
   var stdout = proc.stdout;
   stdout.on('error', this.onerror);
   stdout.pipe(this.out);
-  
+
   var stderr = proc.stderr;
   stderr.on('data', this.onerror);
   stderr.on('error', this.onerror);
@@ -252,11 +245,39 @@ ImageMagick.prototype.spawn = function () {
 };
 
 /**
- * Constructs args for cli call
+ * Helper for freehand settings and operations
+ *
+ * @param {String} key
+ * @param {String|Object} obj
+ * @param {Mixed} [val]
  * @api private
  */
+
+ImageMagick.prototype.freehand = function (key, op, val) {
+  var self = this;
+
+  if (typeof op == 'string') {
+    return push(key, op, val);
+  }
+
+  Object.keys(op).forEach(function (prop) {
+    push(key, prop, op[prop]);
+  });
+
+  function push (key, op, val) {
+    self[key].push('-' + op);
+    if (val != null) self[key].push(val);
+  }
+};
+
+/**
+ * Constructs args for cli call
+ *
+ * @api private
+ */
+
 ImageMagick.prototype.args = function() {
-  return [].concat(this._settings, [this.input], this._operations, [this.output]);
+  return this._settings.concat([this.input], this._operations, [this.output]);
 }
 
 /**

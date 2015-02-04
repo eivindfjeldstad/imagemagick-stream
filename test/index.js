@@ -3,15 +3,15 @@ var fs = require('fs');
 var im = require('../');
 
 describe('im()', function () {
-  
+
   it('should have an .input property', function () {
     assert(im().input == '-');
   });
-  
+
   it('should have an .output property', function () {
     assert(im().output == '-');
   });
-  
+
   it('should be pipe-able', function (done) {
     var img = im();
     fs.createReadStream(__dirname + '/test.jpg').pipe(img);
@@ -22,7 +22,7 @@ describe('im()', function () {
       done();
     });
   });
-  
+
   it('should emit errors from stderr', function (done) {
     var img = im();
     img.write('invalid data');
@@ -32,7 +32,7 @@ describe('im()', function () {
       done();
     });
   });
-  
+
   describe('.from()', function () {
     it('should read from the given path', function (done) {
       var img = im().from(__dirname + '/test.jpg');
@@ -44,7 +44,7 @@ describe('im()', function () {
       });
     });
   });
-  
+
   describe('.to()', function () {
     it('should write to the given path', function (done) {
       var img = im().to(__dirname + '/test-resized.jpg');
@@ -56,7 +56,7 @@ describe('im()', function () {
       });
     });
   });
-  
+
   describe('.spawn()', function () {
     it('should call .spawn() with setImmediate', function (done) {
       im().on('spawn', function (proc) {
@@ -65,7 +65,7 @@ describe('im()', function () {
         done();
       });
     });
-  
+
     it('should add input and output format to args', function (done) {
       var img = im();
       var args = img.args();
@@ -74,7 +74,7 @@ describe('im()', function () {
       done();
     });
   });
-  
+
   describe('.quality()', function () {
     it('should set the quality option', function () {
       var img = im().quality(90);
@@ -84,7 +84,7 @@ describe('im()', function () {
       assert(args[2] == '90');
     });
   });
-  
+
   describe('.resize()', function () {
     it('should set the resize option', function () {
       var img = im().resize('200x200');
@@ -94,7 +94,7 @@ describe('im()', function () {
       assert(args[2] == '200x200');
     });
   });
-  
+
   describe('.scale()', function () {
     it('should set the scale option', function () {
       var img = im().scale('200x200');
@@ -104,7 +104,7 @@ describe('im()', function () {
       assert(args[2] == '200x200');
     });
   });
-  
+
   describe('.crop()', function () {
     it('should set the crop option', function () {
       var img = im().crop('200x200');
@@ -114,7 +114,7 @@ describe('im()', function () {
       assert(args[2] == '200x200');
     });
   });
-  
+
   describe('.gravity()', function () {
     it('should set the gravity option', function () {
       var img = im().gravity('North');
@@ -124,7 +124,7 @@ describe('im()', function () {
       assert(args[2] == 'North');
     });
   });
-  
+
   describe('.thumbnail()', function () {
     it('should set the thumbnail option', function () {
       var img = im().thumbnail('200x200');
@@ -134,7 +134,7 @@ describe('im()', function () {
       assert(args[2] == '200x200');
     });
   });
-  
+
   describe('.autoOrient()', function () {
     it('should set the auto-orient option', function () {
       var img = im().autoOrient();
@@ -143,7 +143,7 @@ describe('im()', function () {
       assert(args[1] == '-auto-orient');
     });
   });
-  
+
   describe('.type()', function () {
     it('should set the type option', function () {
       var img = im().type('jpg');
@@ -153,7 +153,7 @@ describe('im()', function () {
       assert(args[2] == 'jpg');
     });
   });
-  
+
   describe('.inputFormat()', function () {
     it('should set the input format', function () {
       var img = im().inputFormat('test');
@@ -161,7 +161,7 @@ describe('im()', function () {
       assert(args[0] == 'test:-');
     });
   });
-  
+
   describe('.outputFormat()', function () {
     it('should set the output format', function () {
       var img = im().outputFormat('test');
@@ -169,13 +169,26 @@ describe('im()', function () {
       assert(args[1] == 'test:-');
     });
   });
-  
-  describe('.operations()', function () {
-    it('should allow freehand arguments', function () {
-      var img = im().operations({
+
+  describe('.op()', function () {
+    it('should accept a key-value pair', function () {
+      var img = im();
+      img.op('gaussian-blur', 0.05);
+      img.op('interlace', 'Plane');
+
+      var args = img.args();
+      assert(args[1] == '-gaussian-blur');
+      assert(args[2] == '0.05');
+      assert(args[3] == '-interlace');
+      assert(args[4] == 'Plane');
+    });
+
+    it('should accept an object', function () {
+      var img = im().op({
         'gaussian-blur': 0.05,
         'interlace': 'Plane'
       });
+
       var args = img.args();
       assert(args[1] == '-gaussian-blur');
       assert(args[2] == '0.05');
@@ -184,34 +197,62 @@ describe('im()', function () {
     });
   });
 
-  describe('.settings()', function() {
-    it('should allow freehand settings', function() {
-      var img = im().settings({
+  describe('.operations()', function () {
+    it('should alias .op()', function () {
+      var img = im();
+      assert(img.op === img.operations);
+    });
+  });
+
+  describe('.set()', function() {
+    it('should accept a key-value pair', function() {
+      var img = im();
+      img.set('density', 500)
+      img.set('channel', 'RGB');
+
+      var args = img.args();
+      assert(args[0] == '-density');
+      assert(args[1] == 500);
+      assert(args[2] == '-channel');
+      assert(args[3] == 'RGB');
+      assert(args[4] == '-');
+      assert(args[5] == '-');
+    });
+
+    it('should accept an object', function() {
+      var img = im().set({
         'density': 500,
         'channel': 'RGB'
       });
+
       var args = img.args();
-      assert.equal(args[0], '-density');
-      assert.equal(args[1], 500);
-      assert.equal(args[2], '-channel');
-      assert.equal(args[3], 'RGB');
-      assert.equal(args[4], '-');
-      assert.equal(args[5], '-');
-    }),
+      assert(args[0] == '-density');
+      assert(args[1] == 500);
+      assert(args[2] == '-channel');
+      assert(args[3] == 'RGB');
+      assert(args[4] == '-');
+      assert(args[5] == '-');
+    });
 
     it('should be combinable with freehand operations', function() {
-      var img = im().settings({
-        'density': 500
-      }).operations({
-        'gaussian-blur': 0.05
-      });
+      var img = im();
+      img.set('density', 500);
+      img.op('gaussian-blur', 0.05);
+
       var args = img.args();
-      assert.equal(args[0], '-density');
-      assert.equal(args[1], 500);
-      assert.equal(args[2], '-');
-      assert.equal(args[3], '-gaussian-blur');
-      assert.equal(args[4], 0.05);
-      assert.equal(args[5], '-');
+      assert(args[0] == '-density');
+      assert(args[1] == 500);
+      assert(args[2] == '-');
+      assert(args[3] == '-gaussian-blur');
+      assert(args[4] == 0.05);
+      assert(args[5] == '-');
+    });
+  });
+
+  describe('.settings()', function () {
+    it('should alias .set()', function () {
+      var img = im();
+      assert(img.set === img.settings);
     })
   })
 });

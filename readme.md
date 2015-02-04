@@ -12,46 +12,35 @@ Streaming imagemagick api
 var im = require('imagemagick-stream');
 var in = fs.createReadStream('image.png');
 var out = fs.createWriteStream('image-resized.png');
-  
+
 var resize = im().resize('200x200').quality(90);
 
 in.pipe(resize).pipe(out);
-  
+
 // Alternatively
 im('image.png')
   .resize('200x200')
   .quality(90)
   .pipe(out);
-  
+
 // Or
 im('image.png')
   .resize('200x200')
   .quality(90)
   .to('image-resized.png');
 ```
-For freehand operations, use `.operations()`
+
+For freehand settings and operations, use `.op()` and `.set()`.
+See the [imagemagick docs](http://www.imagemagick.org/script/convert.php) a list of available options.
+
 ``` js
 im('image.png')
+  .set('density', 400)
+  .set('channel', 'RGB')
   .resize('200x200')
-  .quality(90)
-  .operations({
-    'strip': undefined,
-    'gaussian-blur': 0.05,
-    'interlace': 'Plane'
-  });
+  .op('gaussian-blur', 0.05);
 ```
 
-For freehand settings, use `.settings()`
-``` js
-im('image.png')
-  .resize('200x200')
-  .quality(90)
-  .settings({
-    'density': 400,
-    'channel': 'RGB'
-  });
-```
-
-## License 
+## License
 
 MIT
