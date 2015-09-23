@@ -1,6 +1,6 @@
 var PassThrough = require('stream').PassThrough;
 var spawn = require('child_process').spawn;
-var Duplex = require('reduplexer');
+var Duplexify = require('duplexify');
 var util = require('util');
 var isError = util.isError;
 var inherit = util.inherits;
@@ -30,20 +30,17 @@ function ImageMagick (src) {
   this.spawn = this.spawn.bind(this);
   this.onerror = this.onerror.bind(this);
 
-  this.in = new PassThrough();
-  this.out = new PassThrough();
-
-  Duplex.call(this, this.in, this.out);
+  Duplexify.call(this);
 
   if (src) this.from(src);
   setImmediate(this.spawn);
 }
 
 /**
- * Inherit from `Duplex`
+ * Inherit from `Duplexify`
  */
 
-inherit(ImageMagick, Duplex);
+inherit(ImageMagick, Duplexify);
 
 /**
  * Sets the input file format
@@ -210,6 +207,7 @@ ImageMagick.prototype.from = function (path) {
  * Write image data to path
  *
  * @param {String} path
+ * @return {Stream} writable stream
  * @api public
  */
 
@@ -217,7 +215,7 @@ ImageMagick.prototype.to = function (path) {
   var write = fs.createWriteStream(path);
   write.on('error', this.onerror);
   this.pipe(write);
-  return this;
+  return write;
 };
 
 /**
@@ -229,13 +227,13 @@ ImageMagick.prototype.to = function (path) {
 ImageMagick.prototype.spawn = function () {
   var proc = spawn('convert', this.args());
 
-  var stdin = proc.stdin;
-  stdin.on('error', this.onerror);
-  this.in.pipe(stdin);
-
   var stdout = proc.stdout;
   stdout.on('error', this.onerror);
-  stdout.pipe(this.out);
+  this.setReadable(stdout);
+
+  var stdin = proc.stdin;
+  stdin.on('error', this.onerror);
+  this.setWritable(stdin);
 
   var stderr = proc.stderr;
   stderr.on('data', this.onerror);

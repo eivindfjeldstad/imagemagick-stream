@@ -14,10 +14,11 @@ describe('im()', function () {
 
   it('should be pipe-able', function (done) {
     var img = im();
+    var write = fs.createWriteStream(__dirname + '/test-resized.jpg');
     fs.createReadStream(__dirname + '/test.jpg').pipe(img);
-    img.pipe(fs.createWriteStream(__dirname + '/test-resized.jpg'));
-    img.on('finish', function () {
-      assert(fs.existsSync(__dirname + '/test-resized.jpg'));
+    img.pipe(write);
+    write.on('finish', function () {
+      assert(fs.statSync(__dirname + '/test-resized.jpg').size > 0);
       fs.unlinkSync(__dirname + '/test-resized.jpg');
       done();
     });
@@ -36,9 +37,10 @@ describe('im()', function () {
   describe('.from()', function () {
     it('should read from the given path', function (done) {
       var img = im().from(__dirname + '/test.jpg');
-      img.pipe(fs.createWriteStream(__dirname + '/test-resized.jpg'));
-      img.on('finish', function () {
-        assert(fs.existsSync(__dirname + '/test-resized.jpg'));
+      var write = fs.createWriteStream(__dirname + '/test-resized.jpg');
+      img.pipe(write);
+      write.on('finish', function () {
+        assert(fs.statSync(__dirname + '/test-resized.jpg').size > 0);
         fs.unlinkSync(__dirname + '/test-resized.jpg');
         done();
       });
@@ -47,10 +49,11 @@ describe('im()', function () {
 
   describe('.to()', function () {
     it('should write to the given path', function (done) {
-      var img = im().to(__dirname + '/test-resized.jpg');
+      var img = im()
+      var write = img.to(__dirname + '/test-resized.jpg');
       fs.createReadStream(__dirname + '/test.jpg').pipe(img);
-      img.on('finish', function () {
-        assert(fs.existsSync(__dirname + '/test-resized.jpg'));
+      write.on('finish', function () {
+        assert(fs.statSync(__dirname + '/test-resized.jpg').size > 0);
         fs.unlinkSync(__dirname + '/test-resized.jpg');
         done();
       });

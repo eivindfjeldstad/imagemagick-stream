@@ -9,7 +9,7 @@
   ],
   "author": "Eivind Fjeldstad",
   "dependencies": {
-    "reduplexer": "0.0.2"
+    "duplexify": "3.4.2"
   },
   "devDependencies": {
     "mocha": "~1.18.2"
