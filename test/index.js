@@ -159,17 +159,17 @@ describe('im()', function () {
 
   describe('.inputFormat()', function () {
     it('should set the input format', function () {
-      var img = im().inputFormat('test');
+      var img = im().inputFormat('jpg');
       var args = img.args();
-      assert(args[0] == 'test:-');
+      assert(args[0] == 'jpg:-');
     });
   });
 
   describe('.outputFormat()', function () {
     it('should set the output format', function () {
-      var img = im().outputFormat('test');
+      var img = im().outputFormat('jpg');
       var args = img.args();
-      assert(args[1] == 'test:-');
+      assert(args[1] == 'jpg:-');
     });
   });
 
