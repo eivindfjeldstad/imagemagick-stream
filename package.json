@@ -8,14 +8,14 @@
     "thumbnail"
   ],
   "author": "Eivind Fjeldstad",
+  "scripts": {
+    "test": "make test"
+  },
   "dependencies": {
     "duplexify": "3.4.2"
   },
   "devDependencies": {
     "mocha": "~1.18.2"
-  },
-  "scirpts": {
-    "test": "make test"
   },
   "repository": {
     "type": "git",
