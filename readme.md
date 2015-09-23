@@ -42,6 +42,7 @@ im('image.png')
 ```
 
 **NOTE:** You shold listen to the `finish` event on the writable stream you're piping to, not the stream from ImageMagick:
+
 ```js
 var read = fs.createReadStream('image.png');
 var write = fs.createWriteStream('image-resized.png');
