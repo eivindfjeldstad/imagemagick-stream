@@ -3,7 +3,5 @@ before_install:
   - sudo apt-get install imagemagick
 language: node_js
 node_js:
-  - "1"
-  - "2"
-  - "3"
   - "4"
+  - "5"
