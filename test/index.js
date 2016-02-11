@@ -28,6 +28,7 @@ describe('im()', function () {
     var img = im();
     img.write('invalid data');
     img.end();
+    img.resume();
     img.on('error', function (err) {
       assert(/^convert/.test(err.message));
       done();
@@ -61,12 +62,20 @@ describe('im()', function () {
   });
 
   describe('.spawn()', function () {
-    it('should call .spawn() with setImmediate', function (done) {
-      im().on('spawn', function (proc) {
-        assert(proc.stdin);
-        assert(proc.stdout);
-        done();
+    it('should call .spawn() when stream is flowing', function (done) {
+      var img = im();
+      var size = 0;
+
+      fs.createReadStream(__dirname + '/test.jpg').pipe(img);
+
+      img.on('data', function (chunk) {
+        size += chunk.byteSize;
       });
+
+      img.on('end', function () {
+        assert(size != 0);
+        done();
+      })
     });
 
     it('should add input and output format to args', function (done) {
@@ -185,26 +194,6 @@ describe('im()', function () {
       assert(args[3] == '-interlace');
       assert(args[4] == 'Plane');
     });
-
-    it('should accept an object', function () {
-      var img = im().op({
-        'gaussian-blur': 0.05,
-        'interlace': 'Plane'
-      });
-
-      var args = img.args();
-      assert(args[1] == '-gaussian-blur');
-      assert(args[2] == '0.05');
-      assert(args[3] == '-interlace');
-      assert(args[4] == 'Plane');
-    });
-  });
-
-  describe('.operations()', function () {
-    it('should alias .op()', function () {
-      var img = im();
-      assert(img.op === img.operations);
-    });
   });
 
   describe('.set()', function() {
@@ -212,21 +201,6 @@ describe('im()', function () {
       var img = im();
       img.set('density', 500)
       img.set('channel', 'RGB');
-
-      var args = img.args();
-      assert(args[0] == '-density');
-      assert(args[1] == 500);
-      assert(args[2] == '-channel');
-      assert(args[3] == 'RGB');
-      assert(args[4] == '-');
-      assert(args[5] == '-');
-    });
-
-    it('should accept an object', function() {
-      var img = im().set({
-        'density': 500,
-        'channel': 'RGB'
-      });
 
       var args = img.args();
       assert(args[0] == '-density');
@@ -251,11 +225,4 @@ describe('im()', function () {
       assert(args[5] == '-');
     });
   });
-
-  describe('.settings()', function () {
-    it('should alias .set()', function () {
-      var img = im();
-      assert(img.set === img.settings);
-    })
-  })
 });
