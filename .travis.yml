@@ -3,8 +3,6 @@ before_install:
   - sudo apt-get install imagemagick
 language: node_js
 node_js:
-  - "0.10"
-  - "0.12"
   - "1"
   - "2"
   - "3"
