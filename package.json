@@ -9,7 +9,7 @@
   ],
   "author": "Eivind Fjeldstad",
   "scripts": {
-    "test": "make test"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
     "duplexify": "3.4.2"
