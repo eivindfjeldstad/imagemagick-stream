@@ -218,19 +218,20 @@ class ImageMagick extends Duplexify {
     */
 
    spawn () {
+     const onerror = this.onerror.bind(this);
      const proc = spawn('convert', this.args());
 
      const stdout = proc.stdout;
-     stdout.on('error', (e) => this.onerror(e));
+     stdout.on('error', onerror);
      this.setReadable(stdout);
 
      const stdin = proc.stdin;
-     stdin.on('error', (e) => this.onerror(e));
+     stdin.on('error', onerror);
      this.setWritable(stdin);
 
      const stderr = proc.stderr;
-     stderr.on('data', this.onerror);
-     stderr.on('error', (e) => this.onerror(e));
+     stderr.on('data', onerror);
+     stderr.on('error', onerror);
    }
 
    /**
