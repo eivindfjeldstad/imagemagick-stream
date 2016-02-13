@@ -23,6 +23,7 @@ class ImageMagick extends Duplexify {
     this.output = '-';
     this[operators] = [];
     this[settings] = [];
+    this.spawned = false;
     if (src) this.from(src);
   }
 
@@ -31,7 +32,8 @@ class ImageMagick extends Duplexify {
    */
 
   resume () {
-    this.spawn();
+    if (!this.spawned) this.spawn();
+    this.spawned = true;
     super.resume();
   }
 
