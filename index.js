@@ -166,7 +166,9 @@ class ImageMagick extends Duplexify {
 
    set (key, val) {
      this[settings].push(`-${key}`);
-     if (val != null) this[settings].push(val);
+     if (val == null) return this;
+     if (!Array.isArray(val)) val = [val];
+     val.forEach(v => this[settings].push(v));
      return this;
    }
 
@@ -180,7 +182,9 @@ class ImageMagick extends Duplexify {
 
    op (key, val) {
      this[operators].push(`-${key}`);
-     if (val != null) this[operators].push(val);
+     if (val == null) return this;
+     if (!Array.isArray(val)) val = [val];
+     val.forEach(v => this[operators].push(v));
      return this;
    }
 

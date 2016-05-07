@@ -194,6 +194,16 @@ describe('im()', function () {
       assert(args[3] == '-interlace');
       assert(args[4] == 'Plane');
     });
+
+    it('should accept a key and an array', function () {
+      var img = im();
+      img.op('annotate', ['0', "'text'"]);
+
+      var args = img.args();
+      assert(args[1] == '-annotate');
+      assert(args[2] == '0');
+      assert(args[3] == "'text'");
+    });
   });
 
   describe('.set()', function() {
@@ -209,6 +219,16 @@ describe('im()', function () {
       assert(args[3] == 'RGB');
       assert(args[4] == '-');
       assert(args[5] == '-');
+    });
+
+    it('should accept a key and an array', function () {
+      var img = im();
+      img.set('something', ['hello', 'world']);
+
+      var args = img.args();
+      assert(args[0] == '-something');
+      assert(args[1] == 'hello');
+      assert(args[2] == 'world');
     });
 
     it('should be combinable with freehand operations', function() {
