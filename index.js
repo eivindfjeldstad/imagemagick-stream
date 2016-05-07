@@ -157,6 +157,18 @@ class ImageMagick extends Duplexify {
    }
 
    /**
+    * Sets the `annotate` option
+    *
+    * @param {String} args
+    * @api public
+    */
+
+   annotate (degrees, text) {
+     this[operators].push('-annotate', degrees, text);
+     return this;
+   }
+
+   /**
     * Passes additional settings
     *
     * @param {String} key

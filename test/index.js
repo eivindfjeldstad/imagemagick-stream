@@ -166,6 +166,17 @@ describe('im()', function () {
     });
   });
 
+  describe('.annotate()', function () {
+    it('should set the annotate option', function () {
+      var img = im().annotate('0', "'text'");
+      var args = img.args();
+      assert(args.length == 5);
+      assert(args[1] == '-annotate');
+      assert(args[2] == '0');
+      assert(args[3] == "'text'");
+    });
+  });
+
   describe('.inputFormat()', function () {
     it('should set the input format', function () {
       var img = im().inputFormat('jpg');
