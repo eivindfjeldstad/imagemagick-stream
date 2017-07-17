@@ -177,6 +177,22 @@ describe('im()', function () {
     });
   });
 
+  describe('.append()', function () {
+    it('should set the -append option (vertical join)', function () {
+      var img = im().append();
+      var args = img.args();
+      assert(args.length == 3);
+      assert(args[1] == '-append');
+    });
+
+    it('should set the +append option (horizontal join)', function () {
+      var img = im().append(true);
+      var args = img.args();
+      assert(args.length == 3);
+      assert(args[1] == '+append');
+    });
+  });
+
   describe('.inputFormat()', function () {
     it('should set the input format', function () {
       var img = im().inputFormat('jpg');

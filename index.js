@@ -169,6 +169,19 @@ class ImageMagick extends Duplexify {
    }
 
    /**
+    * Sets the `append` option
+    *
+    * @param {Boolean} args
+    * @api public
+    */
+
+   append (horizontalJoin) {
+     var joinStrategy = horizontalJoin ? '+' : '-';
+     this[operators].push(joinStrategy + 'append');
+     return this;
+   }
+
+   /**
     * Passes additional settings
     *
     * @param {String} key
