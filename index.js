@@ -181,6 +181,18 @@ class ImageMagick extends Duplexify {
    }
 
    /**
+    * Sets the `composite` option
+    *
+    * @param {String} otherImagePath
+    * @api public
+    */
+
+   composite(otherImagePath) {
+     this[operators].unshift(otherImagePath, '-composite');
+     return this;
+   }
+
+   /**
     * Sets the `append` option
     *
     * @param {Boolean} args
