@@ -117,6 +117,16 @@ describe('im()', function () {
     });
   });
 
+  describe('.extent()', function () {
+    it('should set the extent option', function () {
+      var img = im().extent('200x200');
+      var args = img.args();
+      assert(args.length == 4);
+      assert(args[1] == '-extent');
+      assert(args[2] == '200x200');
+    });
+  });
+
   describe('.crop()', function () {
     it('should set the crop option', function () {
       var img = im().crop('200x200');

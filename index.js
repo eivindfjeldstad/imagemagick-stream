@@ -98,6 +98,18 @@ class ImageMagick extends Duplexify {
    }
 
    /**
+    * Sets the `extent` option
+    *
+    * @param {String} args
+    * @api public
+    */
+
+   extent (args) {
+     this[operators].push('-extent', args);
+     return this;
+   }
+
+   /**
     * Sets the `crop` option
     *
     * @param {String} args
