@@ -1,5 +1,7 @@
 # imagemagick-stream
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/eivindfjeldstad/imagemagick-stream.svg)](https://greenkeeper.io/)
+
 Streaming imagemagick api
 
 [![npm version](http://img.shields.io/npm/v/imagemagick-stream.svg?style=flat)](https://npmjs.org/package/imagemagick-stream)
