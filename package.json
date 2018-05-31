@@ -15,7 +15,7 @@
     "duplexify": "^3.4.5"
   },
   "devDependencies": {
-    "mocha": "~5.1.0"
+    "mocha": "~5.2.0"
   },
   "repository": {
     "type": "git",
