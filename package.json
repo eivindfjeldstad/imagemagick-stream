@@ -12,7 +12,7 @@
     "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "dependencies": {
-    "duplexify": "^3.4.5"
+    "duplexify": "^4.0.0"
   },
   "devDependencies": {
     "mocha": "~5.2.0"
