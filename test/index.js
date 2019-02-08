@@ -282,4 +282,18 @@ describe('im()', function () {
       assert(args[5] == '-');
     });
   });
+
+  describe('.composite()', function() {
+    it('should set "-composite" option', function() {
+      var img = im();
+      var imgToComp = __dirname + '/composite-image.png';
+      img.composite(imgToComp);
+
+      var args = img.args();
+      assert(args[0] === '-');
+      assert(args[1] === imgToComp);
+      assert(args[2] === '-composite');
+      assert(args[3] === '-');
+    });
+  });
 });
