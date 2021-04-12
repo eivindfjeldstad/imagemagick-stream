@@ -262,7 +262,7 @@ class ImageMagick extends Duplexify {
 
    spawn () {
      const onerror = this.onerror.bind(this);
-     const proc = spawn('convert', this.args());
+     const proc = spawn('convert', this.args(), {maxBuffer: 1024 * 1024 * 1024});
 
      const stdout = proc.stdout;
      stdout.on('error', onerror);
