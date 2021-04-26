@@ -241,6 +241,14 @@ describe('im()', function () {
       assert(args[2] == '0');
       assert(args[3] == "'text'");
     });
+
+    it('should use + instead of - for flag if provided', function () {
+      var img = im();
+      img.op('+repage');
+
+      var args = img.args();
+      assert(args[1] == '+repage');
+    })
   });
 
   describe('.set()', function() {
@@ -281,5 +289,13 @@ describe('im()', function () {
       assert(args[4] == 0.05);
       assert(args[5] == '-');
     });
+
+    it('should use + instead of - for flag if provided', function () {
+      var img = im();
+      img.set('+repage');
+
+      var args = img.args();
+      assert(args[0] == '+repage');
+    })
   });
 });

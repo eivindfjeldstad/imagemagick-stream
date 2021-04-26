@@ -202,7 +202,9 @@ class ImageMagick extends Duplexify {
     */
 
    set (key, val) {
-     this[settings].push(`-${key}`);
+     const isPlusOp = /^\+/.test(key);
+     const flag = isPlusOp ? key : `-${key}`;
+     this[settings].push(flag);
      if (val == null) return this;
      if (!Array.isArray(val)) val = [val];
      val.forEach(v => this[settings].push(v));
@@ -218,7 +220,9 @@ class ImageMagick extends Duplexify {
     */
 
    op (key, val) {
-     this[operators].push(`-${key}`);
+     const isPlusOp = /^\+/.test(key);
+     const flag = isPlusOp ? key : `-${key}`;
+     this[operators].push(flag);
      if (val == null) return this;
      if (!Array.isArray(val)) val = [val];
      val.forEach(v => this[operators].push(v));
